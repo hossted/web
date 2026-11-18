@@ -34,9 +34,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # RUN apt-get clean && apt-get update && apt-get dist-upgrade -y
 
 # Install custom ppas
-RUN apt-get clean && apt-get update && apt-get install -y \
-    software-properties-common && \
-    add-apt-repository -y ppa:certbot/certbot
+#RUN apt-get clean && apt-get update && apt-get install -y \
+#    software-properties-common && \
+#    add-apt-repository -y ppa:certbot/certbot
 
 # Update the repository sources list
 # Utility for apt configuration
@@ -49,26 +49,16 @@ RUN apt-get clean && apt-get update && apt-get install -y \
 
 RUN apt-get clean && apt-get update && apt-get install -y \
     apt-utils \
-    apache2 php8.4 libapache2-mod-php php-mysql php8.4-mbstring \
-	php-curl php-gd php-xml php-zip php8.4-bcmath \
+    apache2 php8.5 libapache2-mod-php php-mysql php8.5-mbstring \
+	php-curl php-gd php-xml php-zip php8.5-bcmath \
     mailutils \
     vim mysql-client net-tools telnet sudo procps ssh inetutils-ping tree pv curl wget \
-    python-certbot-apache \
-	git unzip
+    git unzip rsyslog php-memcached php-redis
 
-# Install rsyslog for php logs
-# Install php-memcached for memcache integration
-RUN apt-get clean && apt-get update && apt-get install -y \
-    rsyslog php-memcached
 # COPY FILES  #####################################################
 
-# Install Redis support
-RUN apt-get clean && apt-get update && apt-get install -y \
-    --allow-unauthenticated \
-    php-redis 
-
 # add custom PHP ini
- COPY php.ini /etc/php/8.4/apache2/php.ini
+ COPY php.ini /etc/php/8.5/apache2/php.ini
 
 # add custom apache conf (htaccess)
 COPY apache2.conf /etc/apache2/apache2.conf
@@ -101,9 +91,9 @@ RUN a2enmod rewrite
 # Install Composer, Drush7, and Drush8
 # https://modulesunraveled.com/blog/install-drush-7-and-8-and-automatically-switch-versions-based-project
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer && \
-	echo "COMPOSER VERSION >>>> $(composer --version)"
+#RUN curl -sS https://getcomposer.org/installer | php && \
+#    mv composer.phar /usr/local/bin/composer && \
+#	echo "COMPOSER VERSION >>>> $(composer --version)"
 
 # Install Drush8
 #RUN cd /usr/local/bin && \
@@ -111,7 +101,7 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 #    cd drush-8 && \
 #    composer require drush/drush:8.x && \
 ##    ln -s /usr/local/bin/drush-8/vendor/bin/drush /usr/local/bin/drush8 && \
-	echo "DRUSH8 VERSION >>>> $(drush8 --version)"
+#	echo "DRUSH8 VERSION >>>> $(drush8 --version)"
 
 # Install Drush7
 #RUN cd /usr/local/bin && \
@@ -125,9 +115,9 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 #RUN ln -s /usr/local/bin/drush8 /usr/local/bin/drush
 
 # Get wordpress cli
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-chmod +x wp-cli.phar && \
-mv wp-cli.phar /usr/local/bin/wp
+#RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+#chmod +x wp-cli.phar && \
+#mv wp-cli.phar /usr/local/bin/wp
 
 # Clear cache, skip this for now
 # RUN cd /var/www/html/sites/default; drush cc all
