@@ -1,0 +1,28 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: getting version tag
+      run: echo VERSION=`cat version.txt`>> $GITHUB_ENV
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --label org.opencontainers.image.version=${VERSION} --tag hossted/web:${VERSION}
+    - name: logon to Docker
+      run: docker login -u hossted -p ${{ secrets.hossted_docker }}
+    - name: tag latest
+      run: docker tag hossted/web:${VERSION} hossted/web:latest
+    - name: pushing to Dockerhub
+      run: docker push hossted/web:${VERSION}
+    - name: pushing latest
+      run: docker push hossted/web:latest
